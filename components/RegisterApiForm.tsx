@@ -11,6 +11,8 @@ export function RegisterApiForm() {
   const [regDesc, setRegDesc] = useState("")
   const [regEndpoint, setRegEndpoint] = useState("")
   const [regPrice, setRegPrice] = useState("")
+  const [regTwitter, setRegTwitter] = useState("")
+  const [regGithub, setRegGithub] = useState("")
   const [regStatus, setRegStatus] = useState<string | null>(null)
   const [registering, setRegistering] = useState(false)
 
@@ -29,6 +31,8 @@ export function RegisterApiForm() {
           price: regPrice,
           walletAddress: providerAddress,
           description: regDesc,
+          twitter: regTwitter || undefined,
+          github: regGithub || undefined,
         }),
       })
       const data = await res.json()
@@ -129,6 +133,30 @@ export function RegisterApiForm() {
                   className="w-full bg-[#0a0a0a] border border-[#333] rounded-lg px-4 py-2 text-white text-sm focus:border-[#00ff88] outline-none"
                   required
                 />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[#888] text-sm block mb-1">
+                    Twitter <span className="text-[#555]">(optional)</span>
+                  </label>
+                  <input
+                    value={regTwitter}
+                    onChange={(e) => setRegTwitter(e.target.value)}
+                    placeholder="@handle"
+                    className="w-full bg-[#0a0a0a] border border-[#333] rounded-lg px-4 py-2 text-white text-sm focus:border-[#00ff88] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-[#888] text-sm block mb-1">
+                    GitHub <span className="text-[#555]">(optional)</span>
+                  </label>
+                  <input
+                    value={regGithub}
+                    onChange={(e) => setRegGithub(e.target.value)}
+                    placeholder="user/repo"
+                    className="w-full bg-[#0a0a0a] border border-[#333] rounded-lg px-4 py-2 text-white text-sm focus:border-[#00ff88] outline-none"
+                  />
+                </div>
               </div>
               <button
                 type="submit"

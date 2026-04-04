@@ -8,7 +8,7 @@
     "price",
     "kling",
     "weather2",
-    "deepl"
+    "deepl-api"
   ],
   "metadata": {
     "weather": {
@@ -77,13 +77,13 @@
       "ensName": "trending.agent-pay.eth",
       "verified": true
     },
-    "deepl": {
+    "deepl-api": {
       "url": "http://localhost:3000/api/proxy-deepl",
-      "price": "0.0004",
+      "price": "0.0002",
       "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
-      "description": "real time traductor",
-      "ensName": "deepl.agent-pay.eth",
-      "registeredAt": "2026-04-04T23:05:55.378Z"
+      "description": "Traductor",
+      "ensName": "deepl-api.agent-pay.eth",
+      "registeredAt": "2026-04-04T23:26:19.622Z"
     }
   }
 }
