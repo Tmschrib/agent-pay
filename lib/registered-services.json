@@ -6,26 +6,75 @@
     "gemini",
     "trending",
     "price",
-    "perplexity",
     "kling",
     "weather2"
   ],
   "metadata": {
-    "weather2": {
-      "url": "http://localhost:3000/api/proxy-weather",
-      "price": "0.0005",
-      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
-      "description": "weather",
-      "ensName": "weather2.agent-pay.eth",
-      "registeredAt": "2026-04-04T17:46:57.709Z"
-    },
     "weather": {
       "url": "http://localhost:3000/api/proxy-weather",
-      "price": "0.0005",
+      "price": "0.000550",
       "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
-      "description": "weather ",
+      "description": "Real-time weather data (OpenWeatherMap)",
       "ensName": "weather.agent-pay.eth",
+      "verified": true,
       "registeredAt": "2026-04-04T17:54:48.872Z"
+    },
+    "weather2": {
+      "url": "http://localhost:3000/api/proxy-weather",
+      "price": "0.000550",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "Real-time weather data (OpenWeatherMap)",
+      "ensName": "weather2.agent-pay.eth",
+      "verified": false,
+      "registeredAt": "2026-04-04T17:46:57.709Z"
+    },
+    "claude": {
+      "url": "http://localhost:3000/api/proxy-claude",
+      "price": "0.000011",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "Claude AI — text generation (Anthropic)",
+      "ensName": "claude.agent-pay.eth",
+      "verified": true
+    },
+    "openai": {
+      "url": "http://localhost:3000/api/proxy-openai",
+      "price": "0.000011",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "GPT-4o — text generation (OpenAI)",
+      "ensName": "openai.agent-pay.eth",
+      "verified": true
+    },
+    "gemini": {
+      "url": "http://localhost:3000/api/proxy-gemini",
+      "price": "0.000011",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "Gemini 2.0 Flash — text generation (Google)",
+      "ensName": "gemini.agent-pay.eth",
+      "verified": true
+    },
+"kling": {
+      "url": "http://localhost:3000/api/proxy-kling",
+      "price": "0.169400",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "Text-to-video generation (Kling AI)",
+      "ensName": "kling.agent-pay.eth",
+      "verified": true
+    },
+    "price": {
+      "url": "http://localhost:3000/api/proxy-coingecko",
+      "price": "0.000550",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "Real-time crypto prices (CoinGecko)",
+      "ensName": "price.agent-pay.eth",
+      "verified": true
+    },
+    "trending": {
+      "url": "http://localhost:3000/api/proxy-trending",
+      "price": "0.000330",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "Trending crypto markets (CoinGecko)",
+      "ensName": "trending.agent-pay.eth",
+      "verified": true
     }
   }
 }

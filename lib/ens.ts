@@ -5,7 +5,7 @@ import registeredServices from "./registered-services.json"
 
 const localMetadata: Record<
   string,
-  { url: string; price: string; wallet: string; description: string }
+  { url: string; price: string; wallet: string; description: string; verified?: boolean }
 > = (registeredServices as any).metadata || {}
 
 export async function getAvailableServices() {
@@ -36,6 +36,7 @@ export async function getAvailableServices() {
         price: price || local?.price || null,
         wallet: wallet || local?.wallet || null,
         description: description || local?.description || null,
+        verified: local?.verified || false,
       }
     })
   )

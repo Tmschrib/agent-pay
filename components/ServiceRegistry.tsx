@@ -7,6 +7,7 @@ interface Service {
   price: string | null
   wallet: string | null
   description: string | null
+  verified: boolean
 }
 
 export function ServiceRegistry() {
@@ -52,9 +53,16 @@ export function ServiceRegistry() {
           className="bg-[#111] border border-[#222] rounded-lg p-4 space-y-2"
         >
           <div className="flex items-center justify-between">
-            <span className="text-[#00ff88] font-mono text-sm">
-              {service.name}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[#00ff88] font-mono text-sm">
+                {service.name}
+              </span>
+              {service.verified && (
+                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#00ff88]/10 text-[#00ff88] border border-[#00ff88]/20">
+                  Verified
+                </span>
+              )}
+            </div>
             <span className="text-white font-mono text-sm">
               ${service.price} USDC
             </span>

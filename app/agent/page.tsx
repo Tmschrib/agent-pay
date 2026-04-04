@@ -1,6 +1,6 @@
 "use client"
-import { useState, useRef, useEffect } from "react"
-import { AgentWallet } from "@/components/AgentWallet"
+import { useState, useRef, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { ServiceRegistry } from "@/components/ServiceRegistry"
 
 interface ChatMessage {
@@ -10,15 +10,48 @@ interface ChatMessage {
 }
 
 export default function AgentPage() {
+  const router = useRouter()
+  const [agentId, setAgentId] = useState<string | null>(null)
   const [walletAddress, setWalletAddress] = useState<string | null>(null)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
   const [running, setRunning] = useState(false)
+  const [balance, setBalance] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  const fetchBalance = useCallback(async (wallet: string) => {
+    try {
+      const res = await fetch(`/api/balance?wallet=${wallet}`)
+      const data = await res.json()
+      setBalance(data.balance)
+    } catch {
+      // Keep current balance on error
+    }
+  }, [])
+
+  useEffect(() => {
+    const id = localStorage.getItem("agentId")
+    const wallet = localStorage.getItem("agentWallet")
+    if (!id || !wallet) {
+      router.push("/agent/login")
+      return
+    }
+    setAgentId(id)
+    setWalletAddress(wallet)
+    fetchBalance(wallet)
+    const interval = setInterval(() => fetchBalance(wallet), 10000)
+    return () => clearInterval(interval)
+  }, [router, fetchBalance])
 
   useEffect(() => {
     scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight)
   }, [messages])
+
+  function handleLogout() {
+    localStorage.removeItem("agentId")
+    localStorage.removeItem("agentWallet")
+    router.push("/agent/login")
+  }
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault()
@@ -33,7 +66,7 @@ export default function AgentPage() {
       const res = await fetch("/api/agent-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMsg, agentId: "chat-agent-001" }),
+        body: JSON.stringify({ message: userMsg, agentId: agentId || "default" }),
       })
       const { logs, result } = await res.json()
 
@@ -55,20 +88,46 @@ export default function AgentPage() {
     }
   }
 
+  if (!agentId || !walletAddress) return null
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-10">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">AI Agent Interface</h1>
-          <p className="text-[#888]">
-            Autonomous payments via x402 — no API keys, no accounts
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">AI Agent Interface</h1>
+            <p className="text-[#888]">
+              Autonomous payments via x402 — no API keys, no accounts
+            </p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 rounded-lg border border-[#333] text-[#888] hover:text-white hover:border-[#555] transition-all text-sm"
+          >
+            Disconnect
+          </button>
         </div>
 
         {/* Agent Wallet */}
-        <section className="bg-[#111] border border-[#222] rounded-xl p-6 space-y-4">
-          <h2 className="text-xl font-semibold">Agent Wallet</h2>
-          <AgentWallet onWalletReady={(addr) => setWalletAddress(addr)} />
+        <section className="bg-[#111] border border-[#222] rounded-xl p-6">
+          <div className="bg-[#0a0a0a] border border-[#222] rounded-lg p-4 flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="text-[#888] text-xs uppercase tracking-wider">
+                Agent: {agentId}
+              </div>
+              <div className="text-white font-mono text-sm">{walletAddress}</div>
+              <div className="text-[#00ff88] text-xs">Base Sepolia — USDC</div>
+            </div>
+            <div className="text-right">
+              <div className="text-[#888] text-xs uppercase tracking-wider mb-1">
+                Balance
+              </div>
+              <div className="text-2xl font-bold text-[#00ff88]">
+                {balance !== null ? `${balance}` : "—"}
+              </div>
+              <div className="text-[#888] text-xs">USDC</div>
+            </div>
+          </div>
         </section>
 
         {/* Available Services */}
@@ -108,7 +167,6 @@ export default function AgentPage() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {/* Payment logs */}
                     {msg.logs && msg.logs.length > 0 && (
                       <div className="bg-[#0d0d0d] border border-[#1a1a1a] rounded-lg px-3 py-2 font-mono text-xs space-y-0.5">
                         {msg.logs.map((log, j) => (
@@ -129,7 +187,6 @@ export default function AgentPage() {
                         ))}
                       </div>
                     )}
-                    {/* Agent response */}
                     <div className="bg-[#111] border border-[#222] rounded-lg px-4 py-2 max-w-[80%]">
                       <p className="text-white text-sm whitespace-pre-wrap">
                         {msg.content}

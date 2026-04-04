@@ -26,7 +26,7 @@ export const GET = withX402(
   },
   process.env.LEDGER_WALLET_ADDRESS as `0x${string}`,
   {
-    price: "$0.000300",
+    price: "$0.000330",
     network: "base-sepolia",
   }
 )
