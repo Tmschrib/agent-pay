@@ -55,6 +55,62 @@
       "transaction": "unknown",
       "network": "base-sepolia",
       "timestamp": "2026-04-04T21:34:08.473Z"
+    },
+    {
+      "service": "weather",
+      "price": "$0.000550",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T22:34:19.313Z"
+    },
+    {
+      "service": "price",
+      "price": "$0.000550",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T22:34:23.070Z"
+    },
+    {
+      "service": "claude",
+      "price": "$0.000100",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T22:34:30.672Z"
+    },
+    {
+      "service": "deepl",
+      "price": "$0.000100",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T22:34:35.790Z"
+    },
+    {
+      "service": "weather",
+      "price": "$0.000550",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T22:41:48.600Z"
+    },
+    {
+      "service": "price",
+      "price": "$0.000550",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T22:41:51.687Z"
+    },
+    {
+      "service": "deepl",
+      "price": "$0.000100",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T22:41:55.083Z"
     }
   ]
 }

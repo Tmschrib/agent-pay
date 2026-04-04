@@ -7,8 +7,8 @@
     "trending",
     "price",
     "kling",
-    "deepl",
-    "weather2"
+    "weather2",
+    "deepl"
   ],
   "metadata": {
     "weather": {
@@ -61,14 +61,6 @@
       "ensName": "kling.agent-pay.eth",
       "verified": true
     },
-    "deepl": {
-      "url": "http://localhost:3000/api/proxy-deepl",
-      "price": "0.000100",
-      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
-      "description": "Text translation — 30+ languages (DeepL)",
-      "ensName": "deepl.agent-pay.eth",
-      "verified": true
-    },
     "price": {
       "url": "http://localhost:3000/api/proxy-coingecko",
       "price": "0.000550",
@@ -84,6 +76,14 @@
       "description": "Trending crypto markets (CoinGecko)",
       "ensName": "trending.agent-pay.eth",
       "verified": true
+    },
+    "deepl": {
+      "url": "http://localhost:3000/api/proxy-deepl",
+      "price": "0.0004",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "real time traductor",
+      "ensName": "deepl.agent-pay.eth",
+      "registeredAt": "2026-04-04T23:05:55.378Z"
     }
   }
 }

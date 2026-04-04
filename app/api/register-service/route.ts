@@ -3,7 +3,7 @@ import { createWalletClient, http } from "viem"
 import { sepolia } from "viem/chains"
 import { privateKeyToAccount } from "viem/accounts"
 import { addEnsContracts } from "@ensdomains/ensjs"
-import { createSubname, transferName } from "@ensdomains/ensjs/wallet"
+import { createSubname, setRecords, transferName } from "@ensdomains/ensjs/wallet"
 
 const RESOLVER_ADDRESS = "0x8FADE66B79cC9f707aB26799354482EB93a5B7dD"
 
@@ -30,18 +30,45 @@ export async function POST(req: NextRequest) {
       signerAddress: account.address,
     })
 
-    // Step 1: Create subname with provider as owner
+    // Step 1: Create subname with US as owner (so we can set records)
     await createSubname(walletClient, {
       name: fullName,
       contract: "registry",
-      owner: walletAddress as `0x${string}`,
+      owner: account.address,
       resolverAddress: RESOLVER_ADDRESS,
     })
     console.log("Subname created:", fullName)
 
-    // Step 2: Store metadata locally
-    // (Sepolia public resolver requires NameWrapper authorization for setText,
-    //  so we store service metadata in the local registry instead)
+    // Step 2: Set text records on-chain
+    try {
+      const recordsHash = await setRecords(walletClient, {
+        name: fullName,
+        resolverAddress: RESOLVER_ADDRESS,
+        texts: [
+          { key: "url", value: endpoint },
+          { key: "price", value: price.toString() },
+          { key: "wallet", value: walletAddress },
+          { key: "description", value: description },
+        ],
+      })
+      console.log("ENS text records set:", recordsHash)
+    } catch (recordsErr) {
+      console.error("Failed to set ENS text records (continuing):", recordsErr)
+    }
+
+    // Step 3: Transfer subname ownership to provider
+    try {
+      await transferName(walletClient, {
+        name: fullName,
+        newOwnerAddress: walletAddress as `0x${string}`,
+        contract: "registry",
+      })
+      console.log("Subname transferred to:", walletAddress)
+    } catch (transferErr) {
+      console.error("Failed to transfer subname (continuing):", transferErr)
+    }
+
+    // Step 4: Also store metadata locally (fallback)
     const { readFileSync, writeFileSync } = await import("fs")
     const { join } = await import("path")
     const jsonPath = join(process.cwd(), "lib", "registered-services.json")
@@ -51,7 +78,6 @@ export async function POST(req: NextRequest) {
       current.services.push(serviceName)
     }
 
-    // Store metadata per service
     if (!current.metadata) current.metadata = {}
     current.metadata[serviceName] = {
       url: endpoint,
