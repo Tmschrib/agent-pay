@@ -1,7 +1,7 @@
-import { withX402 } from "x402-next"
+import { withX402Logged } from "@/lib/x402"
 import { NextRequest, NextResponse } from "next/server"
 
-export const POST = withX402(
+export const POST = withX402Logged(
   async (req: NextRequest) => {
     const { prompt } = await req.json()
 
@@ -31,7 +31,8 @@ export const POST = withX402(
   },
   process.env.LEDGER_WALLET_ADDRESS as `0x${string}`,
   {
-    price: "$0.169400",
+    price: "$0.001000",
     network: "base-sepolia",
-  }
+  },
+  "kling"
 )

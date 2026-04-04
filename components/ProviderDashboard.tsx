@@ -166,9 +166,18 @@ export function ProviderDashboard() {
               </button>
             )}
             {adminMode && (
-              <span className="px-3 py-1.5 rounded-lg bg-yellow-400/10 text-yellow-400 border border-yellow-400/20 text-xs font-semibold uppercase tracking-wider">
-                Admin
-              </span>
+              <button
+                onClick={() => {
+                  setAdminMode(false)
+                  setProviderAddress(null)
+                  setBalance(null)
+                  setStats({ totalRequests: 0, totalRevenue: "$0.000000", lastTransaction: null, services: [] })
+                  setMyServices([])
+                }}
+                className="px-5 py-2.5 rounded-lg border border-yellow-400/30 text-yellow-400 hover:bg-yellow-400/10 transition-all text-sm"
+              >
+                Exit Admin
+              </button>
             )}
             <Link
               href="/provider/new-api"

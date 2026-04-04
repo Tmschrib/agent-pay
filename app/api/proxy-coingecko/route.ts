@@ -1,7 +1,7 @@
-import { withX402 } from "x402-next"
+import { withX402Logged } from "@/lib/x402"
 import { NextRequest, NextResponse } from "next/server"
 
-export const GET = withX402(
+export const GET = withX402Logged(
   async (req: NextRequest) => {
     const { searchParams } = new URL(req.url)
     const coin = searchParams.get("coin") || "ethereum"
@@ -26,5 +26,6 @@ export const GET = withX402(
   {
     price: "$0.000550",
     network: "base-sepolia",
-  }
+  },
+  "price"
 )

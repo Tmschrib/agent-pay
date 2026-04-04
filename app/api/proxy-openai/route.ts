@@ -1,8 +1,8 @@
-import { withX402 } from "x402-next"
+import { withX402Logged } from "@/lib/x402"
 import { NextRequest, NextResponse } from "next/server"
 import OpenAI from "openai"
 
-export const POST = withX402(
+export const POST = withX402Logged(
   async (req: NextRequest) => {
     const { prompt } = await req.json()
 
@@ -22,7 +22,8 @@ export const POST = withX402(
   },
   process.env.LEDGER_WALLET_ADDRESS as `0x${string}`,
   {
-    price: "$0.000011",
+    price: "$0.000100",
     network: "base-sepolia",
-  }
+  },
+  "openai"
 )

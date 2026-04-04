@@ -59,7 +59,9 @@ Rules:
 - OpenAI API: POST with body {"prompt": "your prompt"}
 - Gemini API: POST with body {"prompt": "your prompt"}
 - Kling API (video/image generation): POST with body {"prompt": "your prompt"}
+- DeepL API (translation): POST with body {"text": "text to translate", "target_lang": "FR"} — language codes: EN, FR, DE, ES, IT, PT, NL, PL, JA, ZH, KO, RU
 - For text generation, creative writing, naming, descriptions: use Claude, OpenAI, or Gemini
+- For translation: use the DeepL API
 - For image/video generation: use Kling
 - You can chain multiple APIs (e.g. generate text with Claude, then create image with Kling)
 

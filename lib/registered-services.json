@@ -7,6 +7,7 @@
     "trending",
     "price",
     "kling",
+    "deepl",
     "weather2"
   ],
   "metadata": {
@@ -30,7 +31,7 @@
     },
     "claude": {
       "url": "http://localhost:3000/api/proxy-claude",
-      "price": "0.000011",
+      "price": "0.000100",
       "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
       "description": "Claude AI — text generation (Anthropic)",
       "ensName": "claude.agent-pay.eth",
@@ -38,7 +39,7 @@
     },
     "openai": {
       "url": "http://localhost:3000/api/proxy-openai",
-      "price": "0.000011",
+      "price": "0.000100",
       "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
       "description": "GPT-4o — text generation (OpenAI)",
       "ensName": "openai.agent-pay.eth",
@@ -46,7 +47,7 @@
     },
     "gemini": {
       "url": "http://localhost:3000/api/proxy-gemini",
-      "price": "0.000011",
+      "price": "0.000100",
       "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
       "description": "Gemini 2.0 Flash — text generation (Google)",
       "ensName": "gemini.agent-pay.eth",
@@ -54,10 +55,18 @@
     },
     "kling": {
       "url": "http://localhost:3000/api/proxy-kling",
-      "price": "0.169400",
+      "price": "0.001000",
       "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
       "description": "Text-to-video generation (Kling AI)",
       "ensName": "kling.agent-pay.eth",
+      "verified": true
+    },
+    "deepl": {
+      "url": "http://localhost:3000/api/proxy-deepl",
+      "price": "0.000100",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "Text translation — 30+ languages (DeepL)",
+      "ensName": "deepl.agent-pay.eth",
       "verified": true
     },
     "price": {
