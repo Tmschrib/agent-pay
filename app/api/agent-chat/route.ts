@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     const serviceList = services
       .map(
         (s: any) =>
-          `- ${s.name} (${s.description || "no description"}): price $${s.price} USDC, method: GET, endpoint: ${s.url}`
+          `- ${s.name} (${s.description || "no description"}): price $${s.price} USDC, endpoint: ${s.url}`
       )
       .join("\n")
 
@@ -52,13 +52,19 @@ User request: "${message}"
 
 Rules:
 - You MUST call at least one API if relevant to the request
-- For weather requests, use the weather API with ?city=CityName
-- For crypto prices, use the price API with ?coin=coinname
-- For trending crypto, use the trending API
-- All endpoints use GET method
+- Weather API: GET with ?city=CityName
+- Price API (CoinGecko): GET with ?coin=coinname
+- Trending API (CoinGecko): GET, no params needed
+- Claude API: POST with body {"prompt": "your prompt"}
+- OpenAI API: POST with body {"prompt": "your prompt"}
+- Gemini API: POST with body {"prompt": "your prompt"}
+- Kling API (video/image generation): POST with body {"prompt": "your prompt"}
+- For text generation, creative writing, naming, descriptions: use Claude, OpenAI, or Gemini
+- For image/video generation: use Kling
+- You can chain multiple APIs (e.g. generate text with Claude, then create image with Kling)
 
 Reply ONLY with a JSON array. Each item:
-{"service": "name.agent-pay.eth", "endpoint": "full_url", "method": "GET", "params": {"key": "value"}, "reason": "why"}
+{"service": "name.agent-pay.eth", "endpoint": "full_url", "method": "GET or POST", "params": {"key": "value"}, "reason": "why"}
 
 ONLY the JSON array. No markdown. No backticks. No explanation.`,
         },

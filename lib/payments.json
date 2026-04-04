@@ -7,6 +7,14 @@
       "transaction": "unknown",
       "network": "base-sepolia",
       "timestamp": "2026-04-04T20:12:24.945Z"
+    },
+    {
+      "service": "weather",
+      "price": "$0.000550",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T21:12:18.378Z"
     }
   ]
 }
