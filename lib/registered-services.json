@@ -1,0 +1,31 @@
+{
+  "services": [
+    "weather",
+    "claude",
+    "openai",
+    "gemini",
+    "trending",
+    "price",
+    "perplexity",
+    "kling",
+    "weather2"
+  ],
+  "metadata": {
+    "weather2": {
+      "url": "http://localhost:3000/api/proxy-weather",
+      "price": "0.0005",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "weather",
+      "ensName": "weather2.agent-pay.eth",
+      "registeredAt": "2026-04-04T17:46:57.709Z"
+    },
+    "weather": {
+      "url": "http://localhost:3000/api/proxy-weather",
+      "price": "0.0005",
+      "wallet": "0x63EDBa757005B5140903Fda3D343507111d0480d",
+      "description": "weather ",
+      "ensName": "weather.agent-pay.eth",
+      "registeredAt": "2026-04-04T17:54:48.872Z"
+    }
+  }
+}
