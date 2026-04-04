@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 export default function AgentLoginPage() {
   const router = useRouter()
   const [agentId, setAgentId] = useState("")
+  const [newAgentId, setNewAgentId] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -14,7 +15,6 @@ export default function AgentLoginPage() {
     setLoading(true)
     setError(null)
     try {
-      // First check if account exists without creating
       const checkRes = await fetch("/api/agent-wallet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -25,7 +25,6 @@ export default function AgentLoginPage() {
         setError("No account found with this ID")
         return
       }
-      // Account exists, load it
       const res = await fetch("/api/agent-wallet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -46,22 +45,34 @@ export default function AgentLoginPage() {
     }
   }
 
-  async function handleNewWallet() {
+  async function handleNewWallet(e: React.FormEvent) {
+    e.preventDefault()
+    if (!newAgentId.trim()) return
     setLoading(true)
     setError(null)
     try {
-      const newId = `agent-${Date.now().toString(36)}`
+      // Check if ID already taken
+      const checkRes = await fetch("/api/agent-wallet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ agentId: newAgentId.trim().toLowerCase(), checkOnly: true }),
+      })
+      const checkData = await checkRes.json()
+      if (!checkData.isNew) {
+        setError("This ID is already taken")
+        return
+      }
       const res = await fetch("/api/agent-wallet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agentId: newId }),
+        body: JSON.stringify({ agentId: newAgentId.trim().toLowerCase() }),
       })
       const data = await res.json()
       if (data.error) {
         setError(data.error)
         return
       }
-      localStorage.setItem("agentId", newId)
+      localStorage.setItem("agentId", newAgentId.trim().toLowerCase())
       localStorage.setItem("agentWallet", data.address)
       router.push("/agent")
     } catch {
@@ -113,13 +124,28 @@ export default function AgentLoginPage() {
         </div>
 
         {/* Create new wallet */}
-        <button
-          onClick={handleNewWallet}
-          disabled={loading}
-          className="w-full px-6 py-3 rounded-lg border border-[#333] text-white font-semibold hover:border-[#00ff88] hover:text-[#00ff88] transition-all text-sm disabled:opacity-50"
+        <form
+          onSubmit={handleNewWallet}
+          className="bg-[#111] border border-[#222] rounded-xl p-6 space-y-4"
         >
-          {loading ? "Creating..." : "Initialize New Wallet"}
-        </button>
+          <h2 className="text-lg font-semibold">New Agent</h2>
+          <div>
+            <input
+              value={newAgentId}
+              onChange={(e) => setNewAgentId(e.target.value)}
+              placeholder="Choose an agent ID"
+              className="w-full bg-[#0a0a0a] border border-[#333] rounded-lg px-4 py-3 text-white text-sm focus:border-[#00ff88] outline-none"
+              disabled={loading}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading || !newAgentId.trim()}
+            className="w-full px-6 py-3 rounded-lg border border-[#333] text-white font-semibold hover:border-[#00ff88] hover:text-[#00ff88] transition-all text-sm disabled:opacity-50"
+          >
+            {loading ? "Creating..." : "Initialize New Wallet"}
+          </button>
+        </form>
 
         {error && (
           <p className="text-red-400 text-sm text-center">{error}</p>

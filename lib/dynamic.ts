@@ -7,6 +7,7 @@ import path from "path"
 let evmClient: DynamicEvmWalletClient | null = null
 
 const AGENTS_FILE = path.join(process.cwd(), "lib", "agents.json")
+const WALLET_PASSWORD = process.env.DYNAMIC_WALLET_PASSWORD || "agent-pay-default-key"
 
 function loadAgents(): Record<string, string> {
   try {
@@ -41,9 +42,11 @@ export async function getOrCreateAgentWallet(agentId: string) {
     // Existing agent — reuse wallet
     accountAddress = agents[agentId]
   } else {
-    // New agent — create wallet and save
+    // New agent — create wallet with backup enabled
     const wallet = await client.createWalletAccount({
       thresholdSignatureScheme: ThresholdSignatureScheme.TWO_OF_TWO,
+      password: WALLET_PASSWORD,
+      backUpToClientShareService: true,
     })
     accountAddress = wallet.accountAddress
     saveAgent(agentId, accountAddress)
@@ -52,6 +55,7 @@ export async function getOrCreateAgentWallet(agentId: string) {
   const walletClient = await client.getWalletClient({
     accountAddress,
     chain: baseSepolia,
+    password: WALLET_PASSWORD,
   })
 
   return {

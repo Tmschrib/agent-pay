@@ -28,6 +28,18 @@ export function ProviderDashboard() {
   const [withdrawAmount, setWithdrawAmount] = useState("")
   const [withdrawTx, setWithdrawTx] = useState<string | null>(null)
   const [withdrawing, setWithdrawing] = useState(false)
+  const [withdrawError, setWithdrawError] = useState<string | null>(null)
+  const [balance, setBalance] = useState<string | null>(null)
+
+  const fetchBalance = useCallback(async (wallet: string) => {
+    try {
+      const res = await fetch(`/api/balance?wallet=${wallet}`)
+      const data = await res.json()
+      setBalance(data.balance)
+    } catch {
+      // Keep current balance on error
+    }
+  }, [])
 
   const [myServices, setMyServices] = useState<MyService[]>([])
 
@@ -65,26 +77,34 @@ export function ProviderDashboard() {
     if (!providerAddress) return
     fetchStats(providerAddress)
     fetchMyServices(providerAddress)
+    fetchBalance(providerAddress)
     const interval = setInterval(() => {
       fetchStats(providerAddress)
       fetchMyServices(providerAddress)
+      fetchBalance(providerAddress)
     }, 10000)
     return () => clearInterval(interval)
-  }, [providerAddress, fetchStats, fetchMyServices])
+  }, [providerAddress, fetchStats, fetchMyServices, fetchBalance])
 
   async function handleWithdraw() {
     if (!ledgerSession || !withdrawTo || !withdrawAmount) return
     setWithdrawing(true)
+    setWithdrawError(null)
+    setWithdrawTx(null)
     try {
+      console.log("Starting withdraw...", { to: withdrawTo, amount: withdrawAmount })
       const txHash = await withdrawFunds(
         ledgerSession.dmk,
         ledgerSession.sessionId,
         withdrawTo as `0x${string}`,
         withdrawAmount
       )
+      console.log("Withdraw tx:", txHash)
       setWithdrawTx(txHash)
     } catch (err) {
-      console.error("Withdraw failed:", err)
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error("Withdraw failed:", msg, err)
+      setWithdrawError(msg)
     } finally {
       setWithdrawing(false)
     }
@@ -110,11 +130,25 @@ export function ProviderDashboard() {
 
         {/* Step 1: Ledger Connection */}
         <section className="bg-[#111] border border-[#222] rounded-xl p-6 space-y-4">
-          <h2 className="text-xl font-semibold">1. Connect Ledger</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">1. Connect Ledger</h2>
+            {providerAddress && balance !== null && (
+              <div className="text-right">
+                <div className="text-[#888] text-xs uppercase tracking-wider mb-1">
+                  Balance
+                </div>
+                <div className="text-2xl font-bold text-[#00ff88]">
+                  {balance}
+                </div>
+                <div className="text-[#888] text-xs">USDC</div>
+              </div>
+            )}
+          </div>
           <LedgerConnect
             onAddressReceived={(addr, dmk, sessionId) => {
               setProviderAddress(addr)
               setLedgerSession({ dmk, sessionId })
+              fetchBalance(addr)
             }}
           />
         </section>
@@ -259,6 +293,9 @@ export function ProviderDashboard() {
                   ? "Confirm on Ledger..."
                   : "Withdraw (requires Ledger)"}
               </button>
+              {withdrawError && (
+                <p className="text-red-400 text-sm">{withdrawError}</p>
+              )}
               {withdrawTx && (
                 <a
                   href={`https://sepolia.basescan.org/tx/${withdrawTx}`}
