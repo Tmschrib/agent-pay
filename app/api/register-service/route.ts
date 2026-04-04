@@ -52,17 +52,25 @@ export async function POST(req: NextRequest) {
       signerAddress: account.address,
     })
 
-    // Step 1: Create subname with us as owner (skip if already exists)
-    try {
-      await createSubname(walletClient, {
-        name: fullName,
-        contract: "registry",
-        owner: account.address,
-        resolverAddress: RESOLVER_ADDRESS,
-      })
-      console.log("Subname created:", fullName)
-    } catch (createErr) {
-      console.log("Subname already exists, updating records:", fullName)
+    // Step 1: Create subname with us as owner (try nameWrapper first, then registry)
+    let subnameCreated = false
+    for (const contract of ["nameWrapper", "registry"] as const) {
+      try {
+        await createSubname(walletClient, {
+          name: fullName,
+          contract,
+          owner: account.address,
+          resolverAddress: RESOLVER_ADDRESS,
+        })
+        console.log(`Subname created (${contract}):`, fullName)
+        subnameCreated = true
+        break
+      } catch (err) {
+        console.log(`createSubname via ${contract} failed:`, err instanceof Error ? err.message : "unknown")
+      }
+    }
+    if (!subnameCreated) {
+      console.log("Subname may already exist, continuing:", fullName)
     }
 
     // Step 2: Set text records directly on resolver contract

@@ -111,6 +111,30 @@
       "transaction": "unknown",
       "network": "base-sepolia",
       "timestamp": "2026-04-04T22:41:55.083Z"
+    },
+    {
+      "service": "weather",
+      "price": "$0.000550",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T23:43:15.282Z"
+    },
+    {
+      "service": "price",
+      "price": "$0.000550",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T23:43:18.787Z"
+    },
+    {
+      "service": "deepl",
+      "price": "$0.000100",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-04T23:43:23.102Z"
     }
   ]
 }
