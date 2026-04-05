@@ -39,11 +39,36 @@ function logPayment(entry: {
   }
 }
 
+function resolveServiceName(requestUrl: string, fallbackName: string): string {
+  try {
+    const registry = JSON.parse(fs.readFileSync(PAYMENTS_FILE.replace("payments.json", "registered-services.json"), "utf-8"))
+    const pathname = new URL(requestUrl).pathname
+
+    // Find all services whose URL matches this endpoint
+    for (const [name, meta] of Object.entries(registry.metadata || {})) {
+      const metaUrl = (meta as any).url
+      if (metaUrl) {
+        try {
+          const metaPathname = new URL(metaUrl).pathname
+          if (pathname === metaPathname || pathname.startsWith(metaPathname)) {
+            return name
+          }
+        } catch {
+          // Invalid URL in metadata, skip
+        }
+      }
+    }
+  } catch {
+    // Can't read registry, use fallback
+  }
+  return fallbackName
+}
+
 export function withX402Logged(
   handler: (req: NextRequest) => Promise<NextResponse>,
   payTo: `0x${string}`,
   config: { price: string; network: string },
-  serviceName: string
+  fallbackServiceName: string
 ) {
   const wrapped = withX402(handler, payTo, config)
 
@@ -51,6 +76,8 @@ export function withX402Logged(
     const response = await wrapped(req)
 
     if (response.status < 400 && response.headers.has("x-payment-response")) {
+      const serviceName = resolveServiceName(req.url, fallbackServiceName)
+
       try {
         const paymentData = JSON.parse(
           response.headers.get("x-payment-response") || "{}"
@@ -64,7 +91,6 @@ export function withX402Logged(
           timestamp: new Date().toISOString(),
         })
       } catch {
-        // Payment succeeded but couldn't parse response header — still log it
         logPayment({
           service: serviceName,
           price: config.price,
