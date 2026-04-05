@@ -1,24 +1,31 @@
 import { wrapFetchWithPayment } from "x402-fetch"
 import { withX402 } from "x402-next"
 import { NextRequest, NextResponse } from "next/server"
-import fs from "fs"
-import path from "path"
+import { getServiceRegistry, appendPayment } from "./store"
 
 export const FACILITATOR_URL =
   process.env.X402_FACILITATOR_URL || "https://x402.org/facilitator"
 
-const REGISTRY_FILE = path.join(process.cwd(), "lib", "registered-services.json")
+export async function callServiceWithPayment(
+  serviceUrl: string,
+  walletClient: any,
+  options?: RequestInit
+) {
+  const fetchWithPayment = wrapFetchWithPayment(fetch, walletClient)
+  const response = await fetchWithPayment(serviceUrl, options)
+  return response.json()
+}
 
-export function getServicePrice(proxyPath: string, fallbackPrice: string): string {
+async function getServicePrice(proxyPath: string, fallbackPrice: string): Promise<string> {
   try {
-    const registry = JSON.parse(fs.readFileSync(REGISTRY_FILE, "utf-8"))
+    const registry = await getServiceRegistry()
     for (const [, meta] of Object.entries(registry.metadata || {})) {
-      const metaUrl = (meta as any).url
+      const metaUrl = meta.url
       if (metaUrl) {
         try {
           const metaPathname = new URL(metaUrl).pathname
           if (proxyPath === metaPathname || proxyPath.startsWith(metaPathname)) {
-            return `$${(meta as any).price}`
+            return `$${meta.price}`
           }
         } catch {
           // Invalid URL, skip
@@ -31,46 +38,13 @@ export function getServicePrice(proxyPath: string, fallbackPrice: string): strin
   return fallbackPrice
 }
 
-export async function callServiceWithPayment(
-  serviceUrl: string,
-  walletClient: any,
-  options?: RequestInit
-) {
-  const fetchWithPayment = wrapFetchWithPayment(fetch, walletClient)
-  const response = await fetchWithPayment(serviceUrl, options)
-  return response.json()
-}
-
-const PAYMENTS_FILE = path.join(process.cwd(), "lib", "payments.json")
-
-function logPayment(entry: {
-  service: string
-  price: string
-  payer: string
-  transaction: string
-  network: string
-  timestamp: string
-}) {
+async function resolveServiceName(requestUrl: string, fallbackName: string): Promise<string> {
   try {
-    const data = JSON.parse(fs.readFileSync(PAYMENTS_FILE, "utf-8"))
-    data.payments.push(entry)
-    fs.writeFileSync(PAYMENTS_FILE, JSON.stringify(data, null, 2) + "\n")
-  } catch {
-    fs.writeFileSync(
-      PAYMENTS_FILE,
-      JSON.stringify({ payments: [entry] }, null, 2) + "\n"
-    )
-  }
-}
-
-function resolveServiceName(requestUrl: string, fallbackName: string): string {
-  try {
-    const registry = JSON.parse(fs.readFileSync(PAYMENTS_FILE.replace("payments.json", "registered-services.json"), "utf-8"))
+    const registry = await getServiceRegistry()
     const pathname = new URL(requestUrl).pathname
 
-    // Find all services whose URL matches this endpoint
     for (const [name, meta] of Object.entries(registry.metadata || {})) {
-      const metaUrl = (meta as any).url
+      const metaUrl = meta.url
       if (metaUrl) {
         try {
           const metaPathname = new URL(metaUrl).pathname
@@ -97,20 +71,20 @@ export function withX402Logged(
   return async (req: NextRequest) => {
     // Resolve price dynamically from registry
     const pathname = new URL(req.url).pathname
-    const dynamicPrice = getServicePrice(pathname, fallbackConfig.price)
+    const dynamicPrice = await getServicePrice(pathname, fallbackConfig.price)
     const config = { ...fallbackConfig, price: dynamicPrice }
 
     const wrapped = withX402(handler, payTo, config)
     const response = await wrapped(req)
 
     if (response.status < 400 && response.headers.has("x-payment-response")) {
-      const serviceName = resolveServiceName(req.url, fallbackServiceName)
+      const serviceName = await resolveServiceName(req.url, fallbackServiceName)
 
       try {
         const paymentData = JSON.parse(
           response.headers.get("x-payment-response") || "{}"
         )
-        logPayment({
+        await appendPayment({
           service: serviceName,
           price: config.price,
           payer: paymentData.payer || "unknown",
@@ -119,7 +93,7 @@ export function withX402Logged(
           timestamp: new Date().toISOString(),
         })
       } catch {
-        logPayment({
+        await appendPayment({
           service: serviceName,
           price: config.price,
           payer: "unknown",

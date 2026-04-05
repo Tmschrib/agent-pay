@@ -1,28 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
-import fs from "fs"
-import path from "path"
-
-const PAYMENTS_FILE = path.join(process.cwd(), "lib", "payments.json")
+import { getPayments, getServiceRegistry } from "@/lib/store"
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const wallet = searchParams.get("wallet")
 
-  let payments: any[] = []
-  try {
-    const data = JSON.parse(fs.readFileSync(PAYMENTS_FILE, "utf-8"))
-    payments = data.payments || []
-  } catch {
-    // No payments yet
-  }
+  let payments = await getPayments()
 
   // Filter by wallet if provided
   if (wallet) {
-    const servicesFile = path.join(process.cwd(), "lib", "registered-services.json")
     try {
-      const services = JSON.parse(fs.readFileSync(servicesFile, "utf-8"))
-      const walletServices = Object.entries(services.metadata || {})
-        .filter(([_, meta]: [string, any]) => meta.wallet?.toLowerCase() === wallet.toLowerCase())
+      const registry = await getServiceRegistry()
+      const walletServices = Object.entries(registry.metadata || {})
+        .filter(([_, meta]) => meta.wallet?.toLowerCase() === wallet.toLowerCase())
         .map(([name]) => name)
 
       payments = payments.filter((p) => walletServices.includes(p.service))

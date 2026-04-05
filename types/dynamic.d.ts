@@ -6,10 +6,13 @@ declare module "@dynamic-labs-wallet/node-evm" {
     authenticateApiToken(token: string): Promise<void>
     createWalletAccount(options: {
       thresholdSignatureScheme: string
+      password?: string
+      backUpToClientShareService?: boolean
     }): Promise<{ accountAddress: string }>
     getWalletClient(options: {
       accountAddress: string
       chain: Chain
+      password?: string
     }): Promise<WalletClient<Transport, Chain, Account>>
   }
 }

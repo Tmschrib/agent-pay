@@ -1,12 +1,7 @@
 import { createPublicClient, http } from "viem"
 import { sepolia } from "viem/chains"
 import { normalize } from "viem/ens"
-import registeredServices from "./registered-services.json"
-
-const localMetadata: Record<
-  string,
-  { url: string; price: string; wallet: string; description: string; verified?: boolean }
-> = (registeredServices as any).metadata || {}
+import { getServiceRegistry } from "./store"
 
 export async function getAvailableServices() {
   const client = createPublicClient({
@@ -14,6 +9,8 @@ export async function getAvailableServices() {
     transport: http("https://ethereum-sepolia-rpc.publicnode.com"),
   })
 
+  const registeredServices = await getServiceRegistry()
+  const localMetadata = registeredServices.metadata || {}
   const knownServices: string[] = registeredServices.services
 
   const services = await Promise.all(
