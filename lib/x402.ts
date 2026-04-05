@@ -65,7 +65,7 @@ async function resolveServiceName(requestUrl: string, fallbackName: string): Pro
 export function withX402Logged(
   handler: (req: NextRequest) => Promise<NextResponse>,
   payTo: `0x${string}`,
-  fallbackConfig: { price: string; network: string },
+  fallbackConfig: { price: string; network: "base-sepolia" },
   fallbackServiceName: string
 ) {
   return async (req: NextRequest) => {
