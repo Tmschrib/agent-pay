@@ -295,6 +295,62 @@
       "transaction": "unknown",
       "network": "base-sepolia",
       "timestamp": "2026-04-05T00:27:55.086Z"
+    },
+    {
+      "service": "weather",
+      "price": "$0.000550",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-05T02:27:19.405Z"
+    },
+    {
+      "service": "price",
+      "price": "$0.000550",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-05T02:27:23.236Z"
+    },
+    {
+      "service": "claude",
+      "price": "$0.000100",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-05T02:27:28.659Z"
+    },
+    {
+      "service": "translateapp",
+      "price": "$0.000100",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-05T02:27:32.817Z"
+    },
+    {
+      "service": "translateapp",
+      "price": "$0.000100",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-05T02:27:36.781Z"
+    },
+    {
+      "service": "translateapp",
+      "price": "$0.0025",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-05T02:31:07.186Z"
+    },
+    {
+      "service": "translateapp",
+      "price": "$0.0025",
+      "payer": "unknown",
+      "transaction": "unknown",
+      "network": "base-sepolia",
+      "timestamp": "2026-04-05T02:31:11.691Z"
     }
   ]
 }

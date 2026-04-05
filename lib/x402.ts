@@ -7,6 +7,30 @@ import path from "path"
 export const FACILITATOR_URL =
   process.env.X402_FACILITATOR_URL || "https://x402.org/facilitator"
 
+const REGISTRY_FILE = path.join(process.cwd(), "lib", "registered-services.json")
+
+export function getServicePrice(proxyPath: string, fallbackPrice: string): string {
+  try {
+    const registry = JSON.parse(fs.readFileSync(REGISTRY_FILE, "utf-8"))
+    for (const [, meta] of Object.entries(registry.metadata || {})) {
+      const metaUrl = (meta as any).url
+      if (metaUrl) {
+        try {
+          const metaPathname = new URL(metaUrl).pathname
+          if (proxyPath === metaPathname || proxyPath.startsWith(metaPathname)) {
+            return `$${(meta as any).price}`
+          }
+        } catch {
+          // Invalid URL, skip
+        }
+      }
+    }
+  } catch {
+    // Can't read registry
+  }
+  return fallbackPrice
+}
+
 export async function callServiceWithPayment(
   serviceUrl: string,
   walletClient: any,
@@ -67,12 +91,16 @@ function resolveServiceName(requestUrl: string, fallbackName: string): string {
 export function withX402Logged(
   handler: (req: NextRequest) => Promise<NextResponse>,
   payTo: `0x${string}`,
-  config: { price: string; network: string },
+  fallbackConfig: { price: string; network: string },
   fallbackServiceName: string
 ) {
-  const wrapped = withX402(handler, payTo, config)
-
   return async (req: NextRequest) => {
+    // Resolve price dynamically from registry
+    const pathname = new URL(req.url).pathname
+    const dynamicPrice = getServicePrice(pathname, fallbackConfig.price)
+    const config = { ...fallbackConfig, price: dynamicPrice }
+
+    const wrapped = withX402(handler, payTo, config)
     const response = await wrapped(req)
 
     if (response.status < 400 && response.headers.has("x-payment-response")) {
